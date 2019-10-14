@@ -51,9 +51,12 @@ int main(int argc, char* argv[]){
                 } else {
                     t = tt + l / inr ; //skip to time taken by curr packet
                 }
-            } 
+            }
             //push when current time arrives
-            q.push({tt,id,l});
+            if(cc+l<=c){
+                q.push({tt,id,l});
+                cc+=l;
+            }
         }
     }
 
