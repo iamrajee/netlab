@@ -22,6 +22,12 @@ typedef struct sendbuf{
     int op;
 } sendbuf;
 
+typedef struct h3datastruct{
+    int n;
+    char* s;
+} h3datastruct;
+
+
 int main(int argc, char **argv) {
     int parentfd;
     int childfd;
@@ -34,6 +40,7 @@ int main(int argc, char **argv) {
   	int optval;
   	int n; /* message byte size */
     sendbuf d;
+    h3datastruct h3data;
 
 	printf("=====================Creating socket======================\n");
   	parentfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -49,6 +56,17 @@ int main(int argc, char **argv) {
   	serveraddr.sin_addr.s_addr = htonl(INADDR_ANY);
   	serveraddr.sin_port = htons((unsigned short)portno);
 
+    printf("========================h3 server address====================\n");
+    struct sockaddr_in h3serveraddr;
+    char h3serverip[] = "192.168.1.4"; //h3 ip
+    int h3serverlen;
+    int h3portno;
+    bzero((char *) &h3serveraddr, sizeof(h3serveraddr));
+    h3serveraddr.sin_family = AF_INET;
+    h3serveraddr.sin_addr.s_addr = inet_addr(h3serverip);
+    h3serveraddr.sin_port = htons(h3portno);
+	h3serverlen = sizeof(h3serveraddr);  
+
   	printf("=======================binding==========================\n");
   	if (bind(parentfd, (struct sockaddr *) &serveraddr,sizeof(serveraddr)) < 0) error("ERROR on binding");
 	printf("f1\n");
@@ -58,34 +76,36 @@ int main(int argc, char **argv) {
     printf("f2\n");
 
     clientlen = sizeof(clientaddr);
-	int m1,m2,m3,m4,p1,p2,p4,p1_,p2_,p4_,f1,f2,f4;
 	int flag=0;
   	while (1){
 		printf("f3\n");
     	
-        //wait for connection requ.
+        //=======wait for connection requ.
         childfd = accept(parentfd, (struct sockaddr *) &clientaddr, &clientlen);
         printf("f4\n");
         if (childfd < 0) error("ERROR on accept");
 
-        //find sender host
+        //=======find sender host
         hostp = gethostbyaddr((const char *)&clientaddr.sin_addr.s_addr, sizeof(clientaddr.sin_addr.s_addr), AF_INET);
         if (hostp == NULL) error("ERROR on gethostbyaddr");
         hostaddrp = inet_ntoa(clientaddr.sin_addr);
         if (hostaddrp == NULL) error("ERROR on inet_ntoa\n");
         printf("server established connection with %s (%s)\n", hostp->h_name, hostaddrp);
 
-        //read data
+        //==========read data
         bzero(buf, BUFSIZE);
-        n = recvfrom(parentfd, &d, sizeof(d), 0,(struct sockaddr *) &clientaddr, &clientlen);
-        // n = read(childfd, buf, BUFSIZE);
-        // n = read(childfd, &d, BUFSIZE);
+        // n = recvfrom(parentfd, &d, sizeof(d), 0,(struct sockaddr *) &clientaddr, &clientlen);
+        n = read(childfd, &d, sizeof(d));
         if (n < 0) error("ERROR re&dm socket");
         printf("server received %d bytes: %d %d %d", n, d.n1,d.n2,d.op);
 
-        //echo back the data
-        // n = write(childfd, buf, strlen(buf));
-        // if (n < 0) error("ERROR writing to socket");
+        //============= Send data to h3 ========
+        h3data.n = d.n1 + d.n2;
+        h3data.s = hostaddrp;
+        printf("========================Connecting to h3====================\n");
+        if (connect(childfd, &h3serveraddr, sizeof(h3serveraddr)) < 0)  error("ERROR connecting!\n");
+        n = write(childfd, &h3data, sizeof(h3data));
+        if (n < 0) error("ERROR writing to socket");
 
         close(childfd);
 			
