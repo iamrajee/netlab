@@ -37,11 +37,12 @@ int main(int argc, char *argv[]) {
 
 	raw_socket = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_IP));
 	if (raw_socket < 0) error("Failed to create socket\n");
-
+	
+	//================================= only difference here
 	sockaddr_ll sll;
-    ifreq ifr; 
+    ifreq ifr;
     bzero(&sll , sizeof(sll));
-    bzero(&ifr , sizeof(ifr));  
+    bzero(&ifr , sizeof(ifr)); 
     strncpy((char *)ifr.ifr_name ,"eth1" , IFNAMSIZ);
     
     if((ioctl(raw_socket , SIOCGIFINDEX , &ifr)) == -1) error("Unable to find interface index");
@@ -49,6 +50,7 @@ int main(int argc, char *argv[]) {
     sll.sll_ifindex = ifr.ifr_ifindex; 
     sll.sll_protocol = htons(ETH_P_IP);
     if((bind(raw_socket, (struct sockaddr *)&sll , sizeof(sll))) == -1) error("bind: ");
+	//=======================================
 	
 	int t = 0;        
 	while (true) {
