@@ -13,7 +13,6 @@ int c;//capacity
 // float inr;//incoming rate
 float highr;//high rate
 float lowr;//low rate
-float fullT; //time taken to fill full bucket
 float dt;//delta t
 float t;//time
 int cc; //current capacity

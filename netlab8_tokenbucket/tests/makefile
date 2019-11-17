@@ -1,6 +1,8 @@
-# p=shape
+p=shape
 # p=fifo
-p=combined
+q=fifo_new
+# p=combined
 run:
 	g++ $(p).cpp -o $(p) -std=c++14
-	./$(p) 250 4.0 < arrivals.txt
+	g++ $(q).cpp -o $(q) -std=c++14
+	./$(p) 250 4.0 < ./$(q) 250 4.0 < arrivals.txt

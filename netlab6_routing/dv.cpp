@@ -24,16 +24,6 @@ void bellmanford(){
             }
         }
     }
-    // for(u=0; u<V; u++){
-    //     for(auto it:adj[u]){
-    //         v = it.first;
-    //         w = it.second;
-    //         if(dist[u] + w < dist[v]) {//if thier thier are any further changes which it must had negitive cycles!!!
-    //           cout<<"Negative Cycle exists!!"<<endl;
-    //           return;
-    //         }
-    //     }
-    // }
 }
 
 int main(){
