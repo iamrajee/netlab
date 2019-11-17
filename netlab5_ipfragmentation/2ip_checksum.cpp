@@ -51,7 +51,7 @@ void list_files(const char *path, vector<string>& v) {
     // Close directory stream
     closedir(dir);
 }
-
+//============================  check checksum ===========================//
 bool check_integrity(const char *filename){
     // reading a file byte-byte-byte
     ifstream input(filename, ios::binary);
@@ -60,7 +60,7 @@ bool check_integrity(const char *filename){
     int hlen = (buffer[0] & 0xF); // number of 32-bit words
 
     vector <uint16_t> header_bytes;
-    for (int i= 0; i < 4 * hlen ; i+=2){
+    for (int i= 0; i < 4 * hlen ; i+=2){//no. of bits =(32*hlen)/8
         uint16_t temp = ((buffer[i] << 8) | buffer[i+1]);
         header_bytes.push_back(temp);
     }
@@ -101,10 +101,10 @@ ostream& operator << (ostream &out, const ip_header &ih) {
     return out;
 }
 
+//================================ read ip header ======================================//
 ip_header read_ip_header(const char *filename) {
-    // reading a file byte-byte-byte
     ifstream input(filename, ios::binary);
-    vector<unsigned char> b(istreambuf_iterator<char>(input), {});
+    vector<unsigned char> b(istreambuf_iterator<char>(input), {});//list of bytes
     vector<uint> buffer;
     int hlen = (b[0] & 0xF); // number of 32-bit words : multiples of 4 bytes
 
