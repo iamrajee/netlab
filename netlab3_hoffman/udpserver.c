@@ -79,7 +79,7 @@ int main(int argc, char **argv) {
 			if(m4==0) m4=1;
 			else m4=0;
 		}else if(f1+f2==2){
-			if(m1==0) m2=1;
+			if(m1==0) m1=1;
 			else m1=0;
 		}else if(f1+f4==2){
 			if(m2==0) m2=1;
